@@ -48,7 +48,7 @@ function App() {
 
   return (
     <div className="container">
-      <div className="row"><h1>Onboarding</h1></div>
+      <div className="row"><h1>Example application with embedded Wallet</h1></div>
       <div className="row">
         <div className="col-sm"/>
         <div className="col-sm">
@@ -71,7 +71,7 @@ function App() {
               )
             }
           </div>
-          <button type="submit" className="btn btn-primary" onClick={submitOnboardingForm}>{isLoading ? 'Loading...' : 'Get Wallet'}</button>
+          <button type="submit" className="btn btn-primary" onClick={submitOnboardingForm}>{isLoading ? 'Loading...' : 'Initialize'}</button>
         </div>
         <div className="col-sm"/>
       </div>
