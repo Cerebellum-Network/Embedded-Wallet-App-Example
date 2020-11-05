@@ -6,8 +6,11 @@ declare const window: any;
 function App() {
   const [appId, setAppId] = useState('');
   const [userId, setUserId] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [wallet, setWallet]: [any, any] = useState(null);
+  const [collapsedIndex, setCollapsedIndex] = useState<number | null>(0);
+  const [destination, setDestination] = useState<string>('');
+  const [amount, setAmount] = useState<string>('');
 
   const onAppIdChanged = (e: any) => {
     setAppId(e.target.value);
@@ -19,7 +22,7 @@ function App() {
 
   const submitOnboardingForm = async () => {
     if (!appId || !userId) {
-      alert('Application ID and User External ID is required!');
+      alert('Application ID and User External ID are required!');
     }
 
     setIsLoading(true);
@@ -35,6 +38,8 @@ function App() {
           publicKey: localWallet.publicKey,
           privateKey: localWallet.secret,
         });
+
+        setDestination(localWallet.publicKey);
       } else {
         alert('Something went wrong!');
       }
@@ -46,9 +51,49 @@ function App() {
     setIsLoading(false);
   };
 
-  return (
-    <div className="container">
-      <div className="row"><h1>Example application with embedded Wallet</h1></div>
+  const submitPaymentForm = async () => {
+    if (!amount || !destination) {
+      alert('Amount and destination are required!');
+    }
+
+    setIsLoading(true);
+
+    try {
+      await window.cereSDK.rewardUser(destination, "asset", amount);
+    } catch (e) {
+      console.error(e.messages);
+      alert(e.message);
+    }
+
+    setIsLoading(false);
+  };
+
+  const collapse = (index: number) => {
+    setCollapsedIndex(isActiveIndex(index) ? null : index);
+  };
+
+  const isActiveIndex = (index: number) => {
+    return index === collapsedIndex;
+  };
+
+  const renderCollapseClass = (index: number) => {
+    return isActiveIndex(index) ? 'show' : '';
+  };
+
+  const renderCollapseIcon = (index: number) => {
+    return isActiveIndex(index) ? '▲' : '▼';
+  };
+
+  const onDestinationChanged = (e: any) => {
+    setDestination(e.target.value);
+  };
+
+  const onAmountChanged = (e: any) => {
+    setAmount(e.target.value);
+  };
+
+  const renderOnboardingForm = () => {
+    return (
       <div className="row">
         <div className="col-sm"/>
         <div className="col-sm">
@@ -75,6 +120,58 @@ function App() {
         </div>
         <div className="col-sm"/>
       </div>
+    );
+  };
+
+  return (
+    <div className="container">
+      <div className="row"><h1>Example application with embedded Wallet</h1></div>
+      <div id="accordion">
+        <div className="card">
+          <div className="card-header" id="headingOne">
+            <h5 className="mb-0">
+              <button onClick={collapse.bind(null, 0)} className="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Create user {renderCollapseIcon(0)}
+              </button>
+            </h5>
+          </div>
+
+          <div id="collapseOne" className={`collapse ${renderCollapseClass(0)}`} aria-labelledby="headingOne" data-parent="#accordion">
+            <div className="card-body">
+              {renderOnboardingForm()}
+            </div>
+          </div>
+        </div>
+        <div className="card">
+          <div className="card-header" id="headingTwo">
+            <h5 className="mb-0">
+              <button onClick={collapse.bind(null, 1)} className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Payment {renderCollapseIcon(1)}
+              </button>
+            </h5>
+          </div>
+          <div id="collapseTwo" className={`collapse ${renderCollapseClass(1)}`} aria-labelledby="headingTwo" data-parent="#accordion">
+            <div className="card-body">
+              <div className="row">
+                <div className="col-sm"/>
+                <div className="col-sm">
+                  <div className="form-group">
+                    <label htmlFor="appId">Destination</label>
+                    <input value={destination} onChange={onDestinationChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Destinaction Public Key"/>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="appId">Amount</label>
+                    <input value={amount} onChange={onAmountChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Amount"/>
+                  </div>
+                  <button type="submit" className="btn btn-primary" onClick={submitPaymentForm}>{isLoading ? 'Loading...' : 'Initialize'}</button>
+                </div>
+                <div className="col-sm"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 }
