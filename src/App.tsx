@@ -11,6 +11,7 @@ function App() {
   const [collapsedIndex, setCollapsedIndex] = useState<number | null>(0);
   const [destination, setDestination] = useState<string>('');
   const [amount, setAmount] = useState<string>('');
+  const [paymentInfo, setPaymentInfo] = useState<string>('');
 
   const onAppIdChanged = (e: any) => {
     setAppId(e.target.value);
@@ -59,7 +60,8 @@ function App() {
     setIsLoading(true);
 
     try {
-      await window.cereSDK.rewardUser(destination, "asset", amount);
+      const result = await window.cereSDK.rewardUser(destination, "asset", amount);
+      setPaymentInfo(result);
     } catch (e) {
       console.error(e.messages);
       alert(e.message);
@@ -157,13 +159,22 @@ function App() {
                 <div className="col-sm">
                   <div className="form-group">
                     <label htmlFor="appId">Destination</label>
-                    <input value={destination} onChange={onDestinationChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Destinaction Public Key"/>
+                    <input value={destination} onChange={onDestinationChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Destination Public Key"/>
                   </div>
                   <div className="form-group">
                     <label htmlFor="appId">Amount</label>
                     <input value={amount} onChange={onAmountChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Amount"/>
                   </div>
-                  <button type="submit" className="btn btn-primary" onClick={submitPaymentForm}>{isLoading ? 'Loading...' : 'Initialize'}</button>
+                  <div className="form-group">
+                    <button type="submit" className="btn btn-primary" onClick={submitPaymentForm}>{isLoading ? 'Loading...' : 'Send'}</button>
+                  </div>
+                  {
+                    paymentInfo && (
+                      <div className="alert alert-success" role="alert">
+                        Transaction finished successfully. Hash: {paymentInfo}
+                      </div>
+                    )
+                  }
                 </div>
                 <div className="col-sm"/>
               </div>
@@ -171,7 +182,6 @@ function App() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }
