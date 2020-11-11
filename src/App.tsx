@@ -13,6 +13,12 @@ function App() {
   const [amount, setAmount] = useState<string>('');
   const [paymentInfo, setPaymentInfo] = useState<string>('');
 
+  const [transmitDataInfo, setTransmitDataInfo] = useState<string>('');
+  const [transmitDataDestination, setTransmitDataDestination] = useState<string>('');
+  const [signatureValues, setSignatureValues] = useState<string>('');
+  const [signature, setSignature] = useState<string>('');
+  const [reference, setReference] = useState<string>('');
+
   const onAppIdChanged = (e: any) => {
     setAppId(e.target.value);
   };
@@ -70,6 +76,24 @@ function App() {
     setIsLoading(false);
   };
 
+  const submitTransmitDataForm = async () => {
+    if (!transmitDataDestination || !signatureValues || !signature || !reference) {
+      alert('All params are required!');
+    }
+
+    setIsLoading(true);
+
+    try {
+      const result = await window.cereSDK.transmitData(transmitDataDestination, signatureValues, signature, reference);
+      setTransmitDataInfo(result);
+    } catch (e) {
+      console.error(e.messages);
+      alert(e.message);
+    }
+
+    setIsLoading(false);
+  };
+
   const collapse = (index: number) => {
     setCollapsedIndex(isActiveIndex(index) ? null : index);
   };
@@ -92,6 +116,22 @@ function App() {
 
   const onAmountChanged = (e: any) => {
     setAmount(e.target.value);
+  };
+
+  const onTransmitDataDestinationChanged = (e: any) => {
+    setTransmitDataDestination(e.target.value);
+  };
+
+  const onSignatureValuesChanged = (e: any) => {
+    setSignatureValues(e.target.value);
+  };
+
+  const onSignatureChanged = (e: any) => {
+    setSignature(e.target.value);
+  };
+
+  const onReferenceChanged = (e: any) => {
+    setReference(e.target.value);
   };
 
   const renderOnboardingForm = () => {
@@ -119,6 +159,43 @@ function App() {
             }
           </div>
           <button type="submit" className="btn btn-primary" onClick={submitOnboardingForm}>{isLoading ? 'Loading...' : 'Initialize'}</button>
+        </div>
+        <div className="col-sm"/>
+      </div>
+    );
+  };
+
+  const renderTransmitDataForm = () => {
+    return (
+      <div className="row">
+        <div className="col-sm"/>
+        <div className="col-sm">
+          <div className="form-group">
+            <label htmlFor="appId">Destination</label>
+            <input value={transmitDataDestination} onChange={onTransmitDataDestinationChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Destination Public Key"/>
+          </div>
+          <div className="form-group">
+            <label htmlFor="appId">Signature Values</label>
+            <input value={signatureValues} onChange={onSignatureValuesChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Signature Values"/>
+          </div>
+          <div className="form-group">
+            <label htmlFor="appId">Signature</label>
+            <input value={signature} onChange={onSignatureChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Signature"/>
+          </div>
+          <div className="form-group">
+            <label htmlFor="appId">Reference (CID)</label>
+            <input value={reference} onChange={onReferenceChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Data Reference (CID)"/>
+          </div>
+          <div className="form-group">
+            <button type="submit" className="btn btn-primary" onClick={submitTransmitDataForm}>{isLoading ? 'Loading...' : 'Send'}</button>
+          </div>
+          {
+            transmitDataInfo && (
+              <div className="alert alert-success" role="alert">
+                Transaction finished successfully. Hash: {transmitDataInfo}
+              </div>
+            )
+          }
         </div>
         <div className="col-sm"/>
       </div>
@@ -178,6 +255,20 @@ function App() {
                 </div>
                 <div className="col-sm"/>
               </div>
+            </div>
+          </div>
+        </div>
+        <div className="card">
+          <div className="card-header" id="headingTwo">
+            <h5 className="mb-0">
+              <button onClick={collapse.bind(null, 2)} className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Transmit Data {renderCollapseIcon(2)}
+              </button>
+            </h5>
+          </div>
+          <div id="collapseTwo" className={`collapse ${renderCollapseClass(2)}`} aria-labelledby="headingTwo" data-parent="#accordion">
+            <div className="card-body">
+              {renderTransmitDataForm()}
             </div>
           </div>
         </div>
