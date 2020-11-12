@@ -3,6 +3,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 
 declare const window: any;
 
+const DEFAULT_NETWORK = 'cere-testnet';
+
 function App() {
   const [appId, setAppId] = useState('');
   const [userId, setUserId] = useState('');
@@ -18,6 +20,8 @@ function App() {
   const [signatureValues, setSignatureValues] = useState<string>('');
   const [signature, setSignature] = useState<string>('');
   const [reference, setReference] = useState<string>('');
+
+  const [selectedNetwork, setSelectedNetwork] = useState<string>(DEFAULT_NETWORK);
 
   const onAppIdChanged = (e: any) => {
     setAppId(e.target.value);
@@ -137,8 +141,8 @@ function App() {
   const renderOnboardingForm = () => {
     return (
       <div className="row">
-        <div className="col-sm"/>
-        <div className="col-sm">
+        <div className="col-md-4"/>
+        <div className="col-md-4">
           <div className="form-group">
             <label htmlFor="appId">Specify Application ID</label>
             <input value={appId} onChange={onAppIdChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Application ID"/>
@@ -160,7 +164,7 @@ function App() {
           </div>
           <button type="submit" className="btn btn-primary" onClick={submitOnboardingForm}>{isLoading ? 'Loading...' : 'Initialize'}</button>
         </div>
-        <div className="col-sm"/>
+        <div className="col-md-4"/>
       </div>
     );
   };
@@ -168,8 +172,8 @@ function App() {
   const renderTransmitDataForm = () => {
     return (
       <div className="row">
-        <div className="col-sm"/>
-        <div className="col-sm">
+        <div className="col-md-4"/>
+        <div className="col-md-4">
           <div className="form-group">
             <label htmlFor="appId">Destination</label>
             <input value={transmitDataDestination} onChange={onTransmitDataDestinationChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Destination Public Key"/>
@@ -184,7 +188,7 @@ function App() {
           </div>
           <div className="form-group">
             <label htmlFor="appId">Reference (CID)</label>
-            <input value={reference} onChange={onReferenceChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Data Reference (CID)"/>
+            <input value={reference} onChange={onReferenceChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Data Reference (CID)"/><option>Cere Testnet (default)</option>
           </div>
           <div className="form-group">
             <button type="submit" className="btn btn-primary" onClick={submitTransmitDataForm}>{isLoading ? 'Loading...' : 'Send'}</button>
@@ -197,7 +201,39 @@ function App() {
             )
           }
         </div>
-        <div className="col-sm"/>
+        <div className="col-md-4"/>
+      </div>
+    );
+  };
+
+  const onNetworkChanged = (e: any) => {
+    const {value} = e.target;
+    setSelectedNetwork(value);
+    window.cereSDK.setNetwork(value);
+  };
+
+  const networks = [{id: DEFAULT_NETWORK, name: 'Cere Testnet'}];
+
+  const renderNetwork = () => {
+    return (
+      <div className="row">
+        <div className="col-md-4"/>
+        <div className="col-md-4"/>
+        <div className="col-md-4">
+          <div className="form-group">
+            <select className="form-control form-control" onChange={onNetworkChanged} defaultValue={selectedNetwork}>
+              <option value={''}>Select Network</option>
+              {
+                networks.map((network) => (
+                  <option
+                    key={network.id}
+                    value={network.id}
+                  >{network.name} {network.id === DEFAULT_NETWORK && '(default)'}</option>
+                ))
+              }
+            </select>
+          </div>
+        </div>
       </div>
     );
   };
@@ -205,6 +241,7 @@ function App() {
   return (
     <div className="container">
       <div className="row"><h1>Example application with embedded Wallet</h1></div>
+      {renderNetwork()}
       <div id="accordion">
         <div className="card">
           <div className="card-header" id="headingOne">
@@ -232,8 +269,8 @@ function App() {
           <div id="collapseTwo" className={`collapse ${renderCollapseClass(1)}`} aria-labelledby="headingTwo" data-parent="#accordion">
             <div className="card-body">
               <div className="row">
-                <div className="col-sm"/>
-                <div className="col-sm">
+                <div className="col-md-4"/>
+                <div className="col-md-4">
                   <div className="form-group">
                     <label htmlFor="appId">Destination</label>
                     <input value={destination} onChange={onDestinationChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Destination Public Key"/>
@@ -253,7 +290,7 @@ function App() {
                     )
                   }
                 </div>
-                <div className="col-sm"/>
+                <div className="col-md-4"/>
               </div>
             </div>
           </div>
