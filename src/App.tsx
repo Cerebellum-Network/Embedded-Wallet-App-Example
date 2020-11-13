@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
+import Button from './Button';
 
 declare const window: any;
 
@@ -33,7 +34,7 @@ function App() {
 
   const submitOnboardingForm = async () => {
     if (!appId || !userId) {
-      alert('Application ID and User External ID are required!');
+      return alert('Application ID and User External ID are required!');
     }
 
     setIsLoading(true);
@@ -64,7 +65,7 @@ function App() {
 
   const submitPaymentForm = async () => {
     if (!amount || !destination) {
-      alert('Amount and destination are required!');
+      return alert('Amount and destination are required!');
     }
 
     setIsLoading(true);
@@ -82,7 +83,7 @@ function App() {
 
   const submitTransmitDataForm = async () => {
     if (!transmitDataDestination || !signatureValues || !signature || !reference) {
-      alert('All params are required!');
+      return alert('All params are required!');
     }
 
     setIsLoading(true);
@@ -162,7 +163,9 @@ function App() {
               )
             }
           </div>
-          <button type="submit" className="btn btn-primary" onClick={submitOnboardingForm}>{isLoading ? 'Loading...' : 'Initialize'}</button>
+          <div className="form-group text-right">
+            <Button onClick={submitOnboardingForm} isLoading={isLoading } />
+          </div>
         </div>
         <div className="col-md-4"/>
       </div>
@@ -188,10 +191,10 @@ function App() {
           </div>
           <div className="form-group">
             <label htmlFor="appId">Reference (CID)</label>
-            <input value={reference} onChange={onReferenceChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Data Reference (CID)"/><option>Cere Testnet (default)</option>
+            <input value={reference} onChange={onReferenceChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Data Reference (CID)"/>
           </div>
-          <div className="form-group">
-            <button type="submit" className="btn btn-primary" onClick={submitTransmitDataForm}>{isLoading ? 'Loading...' : 'Send'}</button>
+          <div className="form-group text-right">
+            <Button onClick={submitTransmitDataForm} isLoading={isLoading } />
           </div>
           {
             transmitDataInfo && (
@@ -244,11 +247,9 @@ function App() {
       {renderNetwork()}
       <div id="accordion">
         <div className="card">
-          <div className="card-header" id="headingOne">
+          <div className="card-header" id="headingOne" onClick={collapse.bind(null, 0)}>
             <h5 className="mb-0">
-              <button onClick={collapse.bind(null, 0)} className="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                Create user {renderCollapseIcon(0)}
-              </button>
+              Create user Flow {renderCollapseIcon(0)}
             </h5>
           </div>
 
@@ -260,10 +261,8 @@ function App() {
         </div>
         <div className="card">
           <div className="card-header" id="headingTwo">
-            <h5 className="mb-0">
-              <button onClick={collapse.bind(null, 1)} className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                Payment {renderCollapseIcon(1)}
-              </button>
+            <h5 className="mb-0" onClick={collapse.bind(null, 1)}>
+              Payment Flow {renderCollapseIcon(1)}
             </h5>
           </div>
           <div id="collapseTwo" className={`collapse ${renderCollapseClass(1)}`} aria-labelledby="headingTwo" data-parent="#accordion">
@@ -279,8 +278,8 @@ function App() {
                     <label htmlFor="appId">Amount</label>
                     <input value={amount} onChange={onAmountChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Amount"/>
                   </div>
-                  <div className="form-group">
-                    <button type="submit" className="btn btn-primary" onClick={submitPaymentForm}>{isLoading ? 'Loading...' : 'Send'}</button>
+                  <div className="form-group text-right">
+                    <Button onClick={submitPaymentForm} isLoading={isLoading } />
                   </div>
                   {
                     paymentInfo && (
@@ -296,11 +295,9 @@ function App() {
           </div>
         </div>
         <div className="card">
-          <div className="card-header" id="headingTwo">
+          <div className="card-header" id="headingTwo" onClick={collapse.bind(null, 2)}>
             <h5 className="mb-0">
-              <button onClick={collapse.bind(null, 2)} className="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                Transmit Data {renderCollapseIcon(2)}
-              </button>
+              Transmit Data Flow {renderCollapseIcon(2)}
             </h5>
           </div>
           <div id="collapseTwo" className={`collapse ${renderCollapseClass(2)}`} aria-labelledby="headingTwo" data-parent="#accordion">
