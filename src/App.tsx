@@ -164,7 +164,7 @@ function App() {
             }
           </div>
           <div className="form-group text-right">
-            <Button onClick={submitOnboardingForm} isLoading={isLoading } />
+            <Button onClick={submitOnboardingForm} isLoading={isLoading}/>
           </div>
         </div>
         <div className="col-md-4"/>
@@ -194,7 +194,7 @@ function App() {
             <input value={reference} onChange={onReferenceChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Data Reference (CID)"/>
           </div>
           <div className="form-group text-right">
-            <Button onClick={submitTransmitDataForm} isLoading={isLoading } />
+            <Button onClick={submitTransmitDataForm} isLoading={isLoading}/>
           </div>
           {
             transmitDataInfo && (
@@ -243,7 +243,9 @@ function App() {
 
   return (
     <div className="container">
-      <div className="row"><h1>Example application with embedded Wallet</h1></div>
+      <div className="row">
+        <div className="col-md-12"><h1>Example application with embedded Wallet</h1></div>
+      </div>
       {renderNetwork()}
       <div id="accordion">
         <div className="card">
@@ -279,7 +281,7 @@ function App() {
                     <input value={amount} onChange={onAmountChanged} type="text" className="form-control" id="appId" aria-describedby="appId" placeholder="Enter Amount"/>
                   </div>
                   <div className="form-group text-right">
-                    <Button onClick={submitPaymentForm} isLoading={isLoading } />
+                    <Button onClick={submitPaymentForm} isLoading={isLoading}/>
                   </div>
                   {
                     paymentInfo && (
